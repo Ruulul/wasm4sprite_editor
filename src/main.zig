@@ -89,7 +89,10 @@ fn handleInput() void {
         switch (selection) {
             .mode => mode = mode.next(),
             .size => size = size.next(),
-            else => buffer[tileIndex()] +%= 1,
+            else => {
+                buffer[tileIndex()] +%= 1;
+                if (mode == .@"1BBP") buffer[tileIndex()] %= 2;
+            },
         }
     }
 
@@ -103,7 +106,9 @@ fn handleInput() void {
         const side = @intFromEnum(size);
         const x_tile = @divTrunc(x_with_offset, @as(usize, @intCast(size.factor())));
         const y_tile = @divTrunc(y_with_offset, @as(usize, @intCast(size.factor())));
-        buffer[x_tile + y_tile * side] +%= 1;
+        const index = x_tile + y_tile * side;
+        buffer[index] +%= 1;
+        if (mode == .@"1BBP") buffer[index] %= 2;
     }
 }
 
