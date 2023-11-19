@@ -8,6 +8,7 @@ pub fn build(b: *std.Build) !void {
         .optimize = std.builtin.OptimizeMode.ReleaseSmall,
     });
 
+    lib.entry = .disabled;
     lib.import_memory = true;
     lib.initial_memory = 65536;
     lib.max_memory = 65536;
@@ -25,8 +26,8 @@ pub fn build(b: *std.Build) !void {
             "zig-out/bin/cart.wasm",
         },
     );
-    run_cmd.step.dependOn(&lib.step);
+    run_cmd.step.dependOn(b.getInstallStep());
 
     const run_step = b.step("run", "run the cart");
-    run_step.dependOn(&run_cmd);
+    run_step.dependOn(&run_cmd.step);
 }
