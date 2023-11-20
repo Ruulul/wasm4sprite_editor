@@ -55,7 +55,6 @@ const Selection = enum {
 var mode: Mode = .@"1BBP";
 var size: Size = .x8;
 var selection: Selection = .mode;
-var tile: usize = 0;
 var buffer = [_]u2{0} ** (64 * 64);
 var frame: u64 = 0;
 var last_sprite: [1024]u8 = undefined;
@@ -82,8 +81,6 @@ fn handleInput() void {
     const just_pressed_mouse = (prev_mouse ^ mouse) & mouse;
     if (just_pressed & w4.BUTTON_DOWN != 0) selection = selection.next();
     if (just_pressed & w4.BUTTON_UP != 0) selection = selection.prev();
-    if (just_pressed & w4.BUTTON_RIGHT != 0) tile +%= 1;
-    if (just_pressed & w4.BUTTON_LEFT != 0) tile -%= 1;
 
     if (just_pressed & w4.BUTTON_1 != 0) {
         const div_factor: usize = switch (mode) {
@@ -110,10 +107,7 @@ fn handleInput() void {
         switch (selection) {
             .mode => mode = mode.next(),
             .size => size = size.next(),
-            else => {
-                buffer[tileIndex()] +%= 1;
-                if (mode == .@"1BBP") buffer[tileIndex()] %= 2;
-            },
+            else => {},
         }
     }
 
@@ -173,15 +167,6 @@ fn checkSelection(to_check: Selection) void {
         0x3
     else
         0x2;
-}
-
-fn isTile(x: usize, y: usize) bool {
-    const side = @intFromEnum(size);
-    return (tile % (side * side)) == (x + y * side);
-}
-fn tileIndex() usize {
-    const side = @intFromEnum(size);
-    return tile % (side * side);
 }
 
 fn normalizeCoord(n: i16) i32 {
