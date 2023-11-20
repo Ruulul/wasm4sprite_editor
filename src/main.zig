@@ -103,8 +103,8 @@ fn handleInput() void {
             var bit_index: u3 = @intCast((i % div_factor) * mul_factor + add_factor);
             const bit_value = @as(u8, pixel) << (7 - bit_index);
             last_sprite[byte_index] |= bit_value;
-            _ = w4.diskw(&last_sprite, side * side);
         }
+        _ = w4.diskw(&last_sprite, side * side);
     }
     if (just_pressed & w4.BUTTON_2 != 0) {
         switch (selection) {
